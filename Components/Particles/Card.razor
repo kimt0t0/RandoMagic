@@ -1,0 +1,15 @@
+﻿@rendermode InteractiveServer
+
+<p role="status">@card</p>
+
+<button class="btn btn-primary" @onclick="GetNewCard">Get a new card</button>
+
+@code {
+    [Parameter]
+    public string? card { get; set; }
+
+    private void GetNewCard()
+    {
+        card = "Kwain";
+    }
+}

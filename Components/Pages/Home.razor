@@ -1,0 +1,55 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+
+<h2>Welcome to your new app !</h2>
+
+<section class="cards-section">
+
+    <div class="cards-container">
+        @for (int i = 1; i <= Counter.counter; i++)
+        {
+            <Card card=@cards?[i-1] />
+        }
+    </div>
+
+    <div class="reset-container">
+        <button class="btn btn-primary" @onclick="ResetAllCards">Reset All Cards</button>
+    </div>
+
+    <Counter />
+</section>
+
+@code {
+    string[]? cards =
+    [
+    "Urza",
+"Mishra",
+"Wilhelt",
+"Tasha",
+"Vraska",
+"Ugin",
+"Lathril",
+"Teysa",
+"Ratadrabrik",
+"Braids"
+    ];
+
+    private void ResetAllCards()
+    {
+        cards =
+        [
+        "Nissa",
+"Omnath",
+"Wilson",
+"Malcolm",
+"Tymna",
+"Ur",
+"Garruk",
+"Vorinclex",
+"Azusa",
+"Anowon"
+        ];
+    }
+}
