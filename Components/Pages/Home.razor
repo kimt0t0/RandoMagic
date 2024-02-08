@@ -8,21 +8,17 @@
 <section class="cards-section">
 
     <div class="cards-container">
-        @for (int i = 1; i <= Counter.counter; i++)
+        @for (int i = 1; i <= CardsForm.counter; i++)
         {
             <Card card=@cards?[i-1] />
         }
     </div>
 
-    <div class="reset-container">
-        <button class="btn btn-primary" @onclick="ResetAllCards">Reset All Cards</button>
-    </div>
-
-    <Counter />
+    <CardsForm />
 </section>
 
 @code {
-    string[]? cards =
+    static string[]? cards =
     [
     "Urza",
 "Mishra",
@@ -36,7 +32,7 @@
 "Braids"
     ];
 
-    private void ResetAllCards()
+    public static void ResetAllCards()
     {
         cards =
         [
