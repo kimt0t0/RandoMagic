@@ -1,0 +1,22 @@
+@if (Home.cards != null && Home.cards.Count() == CardsForm.counter)
+
+{
+    <div class="cards-container">
+        @foreach (var card in Home.cards)
+        {
+            <Card card=card />
+        }
+    </div>
+}
+
+else
+
+{
+    <Loader />
+}
+
+@code
+{
+    [Parameter]
+    public DataModels.CardModel?[]? cards { set; get; }
+}

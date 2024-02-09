@@ -1,6 +1,6 @@
 @rendermode InteractiveServer
 
-<form class="counter-container" @onsubmit="Home.ResetAllCards" focused>
+<form class="counter-container" @onsubmit="async() => await Home.LoadNewCards()" focused>
     <p class="counter">Number of wanted cards:</p>
     <div class="counter-line">
         <button class="btn btn-secondary" @onclick="RemoveCard" @onkeydown="@KeyboardEvent">-1 card</button>
@@ -14,18 +14,18 @@
 
 @code {
     public static int counter = 3;
-    private void AddCard()
+    public void AddCard()
     {
         if (counter < 10) counter++;
     }
-    private void RemoveCard()
+    public void RemoveCard()
     {
         if (counter > 1) counter--;
     }
-    public void KeyboardEvent(KeyboardEventArgs e)
+    public async void KeyboardEvent(KeyboardEventArgs e)
     {
         if (e.Code == "ArrowLeft" || e.Code == "Numpad4") RemoveCard();
         if (e.Code == "ArrowRight" || e.Code == "Numpad6") AddCard();
-        if (e.Code == "Enter" || e.Code == "NumpadEnter") Home.ResetAllCards();
+        if (e.Code == "Enter" || e.Code == "NumpadEnter") await Home.LoadNewCards();
     }
 }

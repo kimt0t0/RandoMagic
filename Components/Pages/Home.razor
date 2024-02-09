@@ -1,51 +1,90 @@
-﻿@page "/"
+@page "/"
 @rendermode InteractiveServer
+@inject IHttpClientFactory ClientFactory
+@using System
+@using System.Threading.Tasks
+@using System.Net.Http
+@using System.Text.Json
+@using System.Linq
+@using System.Globalization
 
 <PageTitle>Home</PageTitle>
 
 <h2>Welcome to your new app !</h2>
 
 <section class="cards-section">
-
-    <div class="cards-container">
-        @for (int i = 1; i <= CardsForm.counter; i++)
-        {
-            <Card card=@cards?[i-1] />
-        }
-    </div>
-
+    <CardsList cards=cards />
     <CardsForm />
 </section>
 
 @code {
-    static string[]? cards =
-    [
-    "Urza",
-"Mishra",
-"Wilhelt",
-"Tasha",
-"Vraska",
-"Ugin",
-"Lathril",
-"Teysa",
-"Ratadrabrik",
-"Braids"
-    ];
 
-    public static void ResetAllCards()
+    public static DataModels.CardModel?[]? cards;
+    public static readonly HttpClient _httpClient = new()
+        {
+            BaseAddress = new Uri("https://api.scryfall.com/")
+        };
+
+    public static async Task LoadNewCards()
     {
-        cards =
-        [
-        "Nissa",
-"Omnath",
-"Wilson",
-"Malcolm",
-"Tymna",
-"Ur",
-"Garruk",
-"Vorinclex",
-"Azusa",
-"Anowon"
-        ];
+        try
+        {
+            async Task<T> waitThen<T>(int milliseconds, Func<Task<T>> action, int id)
+            {
+                Console.WriteLine($"# Start timer with id {id}");
+                await Task.Delay(milliseconds);
+                var t = await action();
+                Console.WriteLine($"# End timer with id {id}");
+                return t;
+            }
+
+            async Task<DataModels.CardModel?> getRandom()
+            {
+                try
+                {
+                    var json = await _httpClient.GetStringAsync("cards/random");
+                    var options = new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        };
+                    var card = JsonSerializer.Deserialize<DataModels.CardModel>(json, options);
+                    Console.WriteLine($"Carte lue: {card?.Name}");
+                    return card;
+                }
+                catch (HttpRequestException e)
+                {
+                    Console.WriteLine("\nException caught !");
+                    Console.WriteLine("Message: {0} ", e.Message);
+                    return null;
+                }
+            }
+
+            var tasks = new Task<DataModels.CardModel?>[]
+            {
+Task.Run(getRandom),
+Task.Run(() => waitThen(1000, getRandom, 1)),
+Task.Run(() => waitThen(100, getRandom, 2)),
+Task.Run(() => waitThen(100, getRandom, 3)),
+Task.Run(() => waitThen(100, getRandom, 4)),
+Task.Run(() => waitThen(100, getRandom, 5)),
+Task.Run(() => waitThen(100, getRandom, 6)),
+Task.Run(() => waitThen(100, getRandom, 7)),
+Task.Run(() => waitThen(100, getRandom, 8)),
+Task.Run(() => waitThen(100, getRandom, 9)),
+Task.Run(() => waitThen(100, getRandom, 10)),
+            };
+
+            DataModels.CardModel?[]? cards = await Task.WhenAll(tasks);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"\nError while requesting data from API:");
+            Console.WriteLine($"Error message: {e.Message}");
+        }
     }
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadNewCards();
+    }
+
 }

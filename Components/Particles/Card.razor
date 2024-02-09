@@ -1,15 +1,24 @@
 ﻿@rendermode InteractiveServer
+@inject Services.DataService.RandomCardsService RandomCardsService
 
-<p role="status">@card</p>
+<p role="status">@card?.Name</p>
 
 <button class="btn btn-primary" @onclick="GetNewCard">Get a new card</button>
 
 @code {
     [Parameter]
-    public string? card { get; set; }
+    public DataModels.CardModel? card { get; set; }
 
-    private void GetNewCard()
+    public static void GetNewCard()
     {
-        card = "Kwain";
+        try
+        {
+            Console.WriteLine("Load new card");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"\nError while requesting data from API:");
+            Console.WriteLine($"Error message: {e.Message}");
+        }
     }
 }
